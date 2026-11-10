@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0A6B47">
+  <title>출장길 IC 맛집</title>
+  <!-- 인터넷이 없으면 맑은 고딕으로 대신 표시됩니다 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Semi+Condensed:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="sign">
+    <div class="sign-inner">
+      <h1>출장길 IC 맛집</h1>
+      <p class="sign-row">
+        <span id="nowLabel">지금 문 연 곳</span>
+        <span class="sign-num"><b id="openCount">0</b><small>/ <span id="totalCount">0</span>곳</small></span>
+      </p>
+    </div>
+  </header>
+
+  <section class="pick" aria-label="노선과 IC 고르기">
+    <div class="routes" id="routes" role="group" aria-label="노선"></div>
+    <div class="line-wrap" id="lineWrap">
+      <ol class="line" id="line" aria-label="IC"></ol>
+    </div>
+    <label class="open-toggle">
+      <input type="checkbox" id="openNow">
+      <span class="open-box" aria-hidden="true"></span>
+      지금 영업 중인 곳만 보기
+    </label>
+  </section>
+
+  <main id="list" class="list" aria-live="polite"></main>
+
+  <footer class="foot">
+    <p>거리는 지도로 잰 값이 아니라 추정값입니다. 영업시간은 출발 전에 전화로 확인하세요.</p>
+    <p>식당 추가·수정은 <b>data.js</b> 파일에서 합니다.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

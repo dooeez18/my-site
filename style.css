@@ -1,0 +1,214 @@
+/* 고속도로 표지에서 가져온 색 */
+:root {
+  --sign: #0A6B47;        /* 안내표지 녹색 */
+  --sign-deep: #08573A;
+  --asphalt: #2A2E31;     /* 글자 */
+  --concrete: #E6E8E3;    /* 바탕 */
+  --slab: #F4F5F2;        /* 목록 바탕 */
+  --rule: #C9CDC6;
+  --muted: #5E655F;
+  --shield-red: #C8102E;
+  --shield-blue: #1D4E9E;
+  --lane: #F2B705;        /* 중앙선 노랑: 영업 중 */
+  --stop: #B42318;        /* 휴무 */
+  --kakao: #FEE500;
+  --naver: #03C75A;
+
+  --f-title: "Black Han Sans", "Malgun Gothic", sans-serif;
+  --f-num: "Barlow Semi Condensed", "Arial Narrow", "Malgun Gothic", sans-serif;
+  --f-body: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--concrete);
+  color: var(--asphalt);
+  font: 400 16px/1.55 var(--f-body);
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--lane); outline-offset: 2px; }
+
+/* ── 안내표지 머리 ── */
+.sign { padding: 16px 16px 0; }
+.sign-inner {
+  max-width: 1080px; margin: 0 auto;
+  background: var(--sign);
+  color: #fff;
+  border-radius: 10px;
+  padding: 18px 20px 14px;
+  box-shadow: inset 0 0 0 3px var(--sign), inset 0 0 0 5px #fff; /* 표지판 흰 테두리 */
+}
+.sign h1 {
+  margin: 0;
+  font: 400 clamp(2rem, 9vw, 3.4rem)/1.05 var(--f-title);
+  letter-spacing: -.01em;
+}
+.sign-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 14px 0 0; padding-top: 10px;
+  border-top: 2px solid rgba(255,255,255,.85);
+  font-size: 1rem;
+}
+.sign-num b { font: 700 2rem/1 var(--f-num); }
+.sign-num small { font: 500 1rem var(--f-num); margin-left: 4px; opacity: .85; }
+
+/* ── 노선 고르기 ── */
+.pick { max-width: 1112px; margin: 0 auto; padding: 18px 16px 6px; }
+.routes { display: flex; flex-wrap: wrap; gap: 6px; }
+.route {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 4px 12px 4px 5px;
+  background: #fff; border: 2px solid var(--rule); border-radius: 999px;
+  cursor: pointer; font-weight: 600;
+}
+.route[aria-pressed="true"] { border-color: var(--asphalt); background: var(--asphalt); color: #fff; }
+.route.all { padding-left: 12px; }
+
+/* 노선번호 방패 */
+.shield {
+  position: relative; display: inline-grid; place-items: center;
+  width: 32px; height: 34px; flex: none;
+  background: var(--shield-blue); color: #fff;
+  font: 700 1rem/1 var(--f-num);
+  clip-path: path("M0 4 Q16 -2 32 4 L32 20 Q32 30 16 34 Q0 30 0 20 Z");
+}
+.shield::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 9px;
+  background: var(--shield-red);
+}
+.shield span { position: relative; margin-top: 6px; }
+
+/* ── 노선도: IC를 노선 순서대로 ── */
+.line-wrap {
+  margin: 14px -16px 0; padding: 0 16px;
+  overflow-x: auto; scrollbar-width: thin;
+}
+.line-wrap[hidden] { display: none; }
+.line {
+  position: relative; display: flex; gap: 0;
+  list-style: none; margin: 0; padding: 6px 0 2px; min-width: max-content;
+}
+.line::before { /* 노선 선 */
+  content: ""; position: absolute; left: 18px; right: 18px; top: 23px;
+  height: 6px; background: var(--asphalt); border-radius: 3px;
+}
+.stop button {
+  position: relative; display: flex; flex-direction: column; align-items: center;
+  gap: 6px; min-width: 76px; padding: 4px 6px 8px;
+  background: none; border: 0; cursor: pointer;
+  font-size: .85rem; line-height: 1.25; text-align: center;
+}
+.stop .dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; border: 4px solid var(--asphalt);
+  transition: transform .18s ease, background-color .18s ease;
+}
+.stop .n { font: 500 .78rem var(--f-num); color: var(--muted); }
+.stop button[aria-pressed="true"] .dot { background: var(--sign); border-color: var(--sign); transform: scale(1.25); }
+.stop button[aria-pressed="true"] .ic { font-weight: 600; color: var(--sign-deep); }
+.stop.all .dot { border-style: dashed; }
+
+/* 영업 중 토글: 체크박스 모양 */
+.open-toggle {
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: 44px; margin-top: 10px; cursor: pointer; font-weight: 600;
+}
+.open-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.open-box {
+  width: 24px; height: 24px; border-radius: 4px;
+  border: 2px solid var(--asphalt); background: #fff; position: relative;
+}
+.open-toggle input:checked + .open-box { background: var(--lane); border-color: var(--asphalt); }
+.open-toggle input:checked + .open-box::after {
+  content: ""; position: absolute; left: 6px; top: 1px; width: 7px; height: 13px;
+  border: solid var(--asphalt); border-width: 0 3px 3px 0; transform: rotate(45deg);
+}
+.open-toggle input:focus-visible + .open-box { outline: 3px solid var(--lane); outline-offset: 2px; }
+
+/* ── 목록: IC별 묶음 ── */
+.list {
+  max-width: 1112px; margin: 0 auto; padding: 8px 16px 8px;
+  column-gap: 24px;
+}
+@media (min-width: 760px)  { .list { column-count: 2; } }
+@media (min-width: 1100px) { .list { column-count: 3; } }
+
+.group {
+  background: var(--slab); border-top: 6px solid var(--sign); border-radius: 0 0 8px 8px;
+  break-inside: avoid; margin-bottom: 18px;
+}
+.group h2 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0; padding: 10px 14px;
+  font: 400 1.35rem/1.2 var(--f-title); color: var(--sign-deep);
+}
+.group h2 .shield { width: 26px; height: 28px; font-size: .85rem; clip-path: path("M0 3 Q13 -2 26 3 L26 16 Q26 24 13 28 Q0 24 0 16 Z"); }
+.group h2 .shield::before { height: 7px; }
+.group h2 .shield span { margin-top: 5px; }
+
+.row { border-top: 1px solid var(--rule); }
+.row.closed .row-head { opacity: .5; }
+.row-head {
+  display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: start;
+  width: 100%; padding: 12px 14px; background: none; border: 0;
+  text-align: left; cursor: pointer;
+}
+.km {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 58px; border-radius: 6px; background: var(--sign); color: #fff;
+  box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 3.5px rgba(255,255,255,.9);
+}
+.km small { font-size: .68rem; line-height: 1; opacity: .9; }
+.km b { font: 700 1.45rem/1 var(--f-num); }
+.km.none b { font-size: 1rem; }
+.name { display: block; font-weight: 600; font-size: 1.06rem; line-height: 1.35; }
+.menu { display: block; color: var(--muted); font-size: .93rem; }
+.status { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: .84rem; }
+.status .open { font-weight: 600; }
+.status .open::before {
+  content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 5px;
+  background: var(--lane); border: 2px solid var(--asphalt); border-radius: 2px; vertical-align: -1px;
+}
+.status .shut { color: var(--stop); font-weight: 600; }
+.status .unknown { color: var(--muted); }
+.status .park { color: var(--sign-deep); font-weight: 600; }
+
+.detail { display: none; padding: 0 14px 16px 90px; }
+.row.expanded .detail { display: block; animation: drop .2s ease-out; }
+@keyframes drop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.detail dl { display: grid; grid-template-columns: 4.6em 1fr; gap: 4px 10px; margin: 0 0 12px; font-size: .92rem; }
+.detail dt { color: var(--muted); }
+.detail dd { margin: 0; }
+.detail dd.unsure { color: var(--muted); font-size: .86rem; }
+.detail a.src { color: var(--sign-deep); }
+.maps { display: flex; gap: 8px; }
+.maps a {
+  flex: 1; display: grid; place-items: center; min-height: 44px; border-radius: 6px;
+  font-weight: 600; text-decoration: none; font-size: .95rem;
+}
+.maps .kakao { background: var(--kakao); color: #191919; }
+.maps .naver { background: var(--naver); color: #fff; }
+
+@media (max-width: 420px) {
+  .detail { padding-left: 14px; }
+}
+
+.empty, .error {
+  column-span: all;
+  padding: 28px 18px; border-radius: 8px; background: var(--slab);
+}
+.empty b, .error b { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.error { border-left: 6px solid var(--stop); }
+.empty button {
+  margin-top: 10px; min-height: 44px; padding: 0 16px; border-radius: 6px;
+  border: 2px solid var(--asphalt); background: #fff; cursor: pointer; font-weight: 600;
+}
+
+.foot { max-width: 1112px; margin: 0 auto; padding: 18px 16px 32px; color: var(--muted); font-size: .84rem; }
+.foot p { margin: 0 0 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
